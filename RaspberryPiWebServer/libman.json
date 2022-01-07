@@ -1,0 +1,37 @@
+{
+  "version": "1.0",
+  "defaultProvider": "unpkg",
+  "libraries": [
+    {
+      "library": "@microsoft/signalr@latest",
+      "destination": "wwwroot/js/signalr/",
+      "files": [
+        "dist/browser/signalr.js",
+        "dist/browser/signalr.min.js",
+        "dist/browser/signalr.js.map",
+        "dist/browser/signalr.min.js.map"
+      ]
+    },
+    {
+      "library": "cldrjs@latest",
+      "destination": "wwwroot/js/cldr/",
+      "files": [
+        "dist/.build/cldr.js",
+        "dist/.build/unresolved.js",
+        "dist/.build/supplemental.js",
+        "dist/.build/event.js"
+      ]
+    },
+    {
+      "library": "globalize@latest",
+      "destination": "wwwroot/js/globalize/",
+      "files": [
+        "dist/globalize.js",
+        "dist/globalize/currency.js",
+        "dist/globalize/date.js",
+        "dist/globalize/message.js",
+        "dist/globalize/number.js"
+      ]
+    }
+  ]
+}

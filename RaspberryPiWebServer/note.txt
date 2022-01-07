@@ -1,0 +1,2 @@
+﻿sudo chown -R pi /home/pi/app/RaspberryPiWebServer.dll
+sudo journalctl -fu kestrel-app.service
