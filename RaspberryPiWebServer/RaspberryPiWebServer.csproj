@@ -3,20 +3,16 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="DevExtreme.AspNet.Data" Version="2.8.2" />
 		<PackageReference Include="DevExtreme.AspNet.Core" Version="21.2.4" />
 		<PackageReference Include="BuildBundlerMinifier" Version="2.9.406" />
-		<PackageReference Include="Iot.Device.Bindings" Version="1.5.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.1" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.1" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
 		<PackageReference Include="System.Device.Gpio" Version="1.5.0" />
 	</ItemGroup>
 
@@ -42,6 +38,9 @@
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="default">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="ktf.db">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="note.txt">

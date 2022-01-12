@@ -25,7 +25,7 @@ namespace RaspberryPiWebServer.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(string values)
+        public async Task<IActionResult> Post([FromForm] string values)
         {
             try
             {
@@ -42,7 +42,7 @@ namespace RaspberryPiWebServer.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Edit(long key, string values)
+        public async Task<IActionResult> Put([FromForm] Guid key, [FromForm] string values)
         {
             var entity = await _service.Get(key);
             if (entity == null)
@@ -63,7 +63,7 @@ namespace RaspberryPiWebServer.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete(long key)
+        public async Task<IActionResult> Delete([FromForm] Guid key)
         {
             var entity = await _service.Get(key);
             if (entity == null)

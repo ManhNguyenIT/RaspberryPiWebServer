@@ -21,7 +21,7 @@ namespace RaspberryPiWebServer.Services
             await _repository.Delete(entity);
         }
 
-        public async Task<Model> Get(long id)
+        public async Task<Model> Get(object id)
         {
             return await _repository.Get(id);
         }

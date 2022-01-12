@@ -6,9 +6,10 @@
     .ShowBorders(true)
     .DataSource(d => d.Mvc()
             .Controller("Model")
-        .LoadAction("Get")
-    @*     .UpdateAction("Put")*@
-    @*.DeleteAction("Delete")*@
+            .LoadAction("Get")
+            .InsertAction("Post")
+            .UpdateAction("Put")
+            .DeleteAction("Delete")
             .Key("Id"))
     .Editing(e => e.Mode(GridEditMode.Popup)
         .AllowUpdating(true)
@@ -17,20 +18,21 @@
         .Popup(p => p
             .Title($"{nameof(Models.Model)} Info")
             .ShowTitle(true)
-            .Width(700)
+            .Width(500)
             .Height(525)
         )
         .Form(f => f.Items(items => {
-            items.AddSimpleFor(m => m.Name);
+            items.AddSimpleFor(m => m.Name).ColSpan(2);
         }))
         )
     .Columns(columns => {
         columns.AddFor(m => m.Name);
     })
     .Paging(p => p.PageSize(10))
-    .FilterRow(f => f.Visible(true))
+    .SearchPanel(s=>s.HighlightSearchText(true))
+    .FilterRow(f => f.Visible(false))
     .HeaderFilter(f => f.Visible(true))
-    .GroupPanel(p => p.Visible(true))
+    .GroupPanel(p => p.Visible(false))
     .Grouping(g => g.AutoExpandAll(false))
     .RemoteOperations(true)
 )

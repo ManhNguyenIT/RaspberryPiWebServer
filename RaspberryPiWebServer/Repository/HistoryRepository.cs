@@ -24,7 +24,7 @@ namespace RaspberryPiWebServer.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<History> Get(long id)
+        public async Task<History> Get(object id)
         {
             return await _context.Histories.FindAsync(id);
         }

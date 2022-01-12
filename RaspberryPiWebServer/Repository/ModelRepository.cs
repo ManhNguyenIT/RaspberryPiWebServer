@@ -24,7 +24,7 @@ namespace RaspberryPiWebServer.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Model> Get(long id)
+        public async Task<Model> Get(object id)
         {
             return await _context.Models.FindAsync(id);
         }
