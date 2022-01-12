@@ -1,2 +1,16 @@
-﻿sudo chown -R pi /home/pi/app/RaspberryPiWebServer.dll
-sudo journalctl -fu kestrel-app.service
+﻿#sudo nano /etc/systemd/system/app.service
+sudo cp /home/pi/app/app.service /etc/systemd/system
+
+sudo systemctl enable app.service
+sudo systemctl start app.service
+sudo systemctl status app.service
+sudo journalctl -fu app.service
+sudo systemctl daemon-reload
+
+#sudo nano /etc/nginx/sites-available/default
+sudo cp /home/pi/app/default /etc/nginx/sites-available/
+ssh-keygen -R 192.168.1.15
+
+sudo service nginx start
+
+scp -r bin/Release/net6.0/publish/* pi@192.168.1.15:/home/pi/app
