@@ -11,7 +11,7 @@ using RaspberryPiWebServer.Data;
 namespace RaspberryPiWebServer.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220112112729_InitialCreate")]
+    [Migration("20220112115815_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
