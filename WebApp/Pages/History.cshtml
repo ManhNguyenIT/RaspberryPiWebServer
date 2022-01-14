@@ -1,0 +1,48 @@
+﻿@page
+@using WebApp.Models
+
+@(Html.DevExtreme().DataGrid<History>()
+    .ShowBorders(true)
+    .DataSource(d => d.Mvc()
+            .Controller(nameof(History))
+            .LoadAction("Get")
+            .InsertAction("Post")
+            .UpdateAction("Put")
+            .DeleteAction("Delete")
+            .Key("Id"))
+    .Editing(e => e.Mode(GridEditMode.Popup)
+        .AllowUpdating(true)
+        .AllowAdding(true)
+        .AllowDeleting(true)
+        .Popup(p => p
+            .Title($"{nameof(History)} Info")
+            .ShowTitle(true)
+            .Width(500)
+            .Height(525)
+        )
+        .Form(f => f.Items(items => {
+            items.AddSimpleFor(m => m.Template).ColSpan(2);
+            items.AddSimpleFor(m => m.Model).ColSpan(2);
+            items.AddSimpleFor(m => m.Code).ColSpan(2);
+        }))
+        )
+    .Columns(columns => {
+        columns.AddFor(m => m.Template);
+        columns.AddFor(m => m.Model);
+        columns.AddFor(m => m.Code);
+        columns.AddFor(m => m.Created)
+            .SortOrder(SortOrder.Desc);
+    })
+    .SearchPanel(searchPanel => searchPanel
+        .Visible(true)
+        .Width(240)
+        .Placeholder("Search...")
+    )
+    .Paging(p => p.PageSize(10))
+    .SearchPanel(s=>s.HighlightSearchText(true))
+    .FilterRow(f => f.Visible(false))
+    .HeaderFilter(f => f.Visible(true))
+    .GroupPanel(p => p.Visible(false))
+    .Grouping(g => g.AutoExpandAll(false))
+    .RemoteOperations(true)
+)

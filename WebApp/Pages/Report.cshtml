@@ -1,0 +1,61 @@
+﻿@page
+@using WebApp.Models
+@model WebApp.Pages.ReportModel
+
+<h2>Report</h2>
+
+@(Html.DevExtreme().DataGrid<Report>()
+    .ShowBorders(true)
+    .DataSource(d => d.Mvc()
+            .Controller(nameof(History))
+            .LoadAction("Report")
+            .Key("Id"))
+    .Columns(columns => {
+        columns.Add()
+            .Caption("Ngày/Giờ")
+            .Columns(a =>
+                    {
+                        a.AddFor(m => m.StartAt)
+                            .Format(Format.ShortDate)
+                            .SortOrder(SortOrder.Desc);
+
+                        a.AddFor(m => m.StartAt)
+                            .Format(Format.ShortTime);
+                    });
+        columns.AddFor(m => m.Template);
+        columns.AddFor(m => m.Total);
+        columns.Add()
+            .Caption("Sản lượng(pcs)")
+            .Columns(a =>
+                    {
+                        a.AddFor(m => m.Total);
+                        a.AddFor(m => m.Ok);
+                        a.AddFor(m => m.Ng);
+                    });
+        columns.Add()
+            .Caption("Tỉ lệ đạt(%)")
+            .Columns(a =>
+                    {
+                        a.AddFor(m => m.OkRate).Caption("Tỉ lệ OK");
+                        a.AddFor(m => m.NgRate).Caption("Tỉ lệ NG");
+                    });
+    })
+    .SearchPanel(searchPanel => searchPanel
+        .Visible(true)
+        .Width(240)
+        .Placeholder("Search...")
+    )
+    .Export(e => e.Enabled(true))
+    .ShowBorders(true)
+    .OnExporting("exporting")
+    .Paging(p => p.PageSize(10))
+    .SearchPanel(s=>s.HighlightSearchText(true))
+    .FilterRow(f => f.Visible(false))
+    .HeaderFilter(f => f.Visible(true))
+    .GroupPanel(p => p.Visible(false))
+    .Grouping(g => g.AutoExpandAll(false))
+)
+
+@section Scripts{
+<script src="~/js/pages/report.js" asp-append-version="true"></script>
+}

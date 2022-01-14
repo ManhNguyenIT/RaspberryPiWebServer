@@ -1,0 +1,147 @@
+﻿@page "/main"
+@using WebApp.Models
+<style>
+    .col > * {
+        width: 100%;
+    }
+
+    .header {
+        font-size: 50px;
+        font-weight: 300;
+        letter-spacing: -.5px;
+        padding: 50px;
+        font-family: "Helvetica Neue","Segoe UI",helvetica,verdana,sans-serif;
+    }
+</style>
+<div>
+    <div class="h-100 d-flex justify-content-left align-items-left"><h3 class="header"></h3></div>
+    <div class="box-body col-xs-12 col-sm-10 col-md-8 offset-sm-1 offset-md-2">
+        <div class="row justify-content-center mb-3">
+            <div class="col">
+                <h4>Status</h4>
+            </div>
+            <div class="col">
+                <button id="running" class="btn btn-outline-success">
+                    RUNNING
+                </button>
+            </div>
+            <div class="col">
+                <button id="setting" class="btn btn-warning">
+                    SETTING
+                </button>
+            </div>
+        </div>
+        <div class="row justify-content-center mb-3">
+            <div class="col">
+                <h4>Sensor</h4>
+            </div>
+            <div class="col">
+                <button id="sensor-on" class="btn btn-outline-success">
+                    ON
+                </button>
+            </div>
+            <div class="col">
+                <button id="sensor-off" class="btn btn-danger">
+                    OFF
+                </button>
+            </div>
+        </div>
+        <div class="row justify-content-center mb-3">
+            <div class="col">
+                <h4>Model</h4>
+            </div>
+            <div class="col">
+                <div class="input-group">
+                    <input type="text" id="model" class="form-control" />
+                </div>
+            </div>
+            <div class="col">
+            </div>
+        </div>
+        <div class="row justify-content-center mb-3">
+            <div class="col">
+                <h4>Sample code</h4>
+            </div>
+            <div class="col">
+                <div class="input-group">
+                    <input type="text" id="template" class="form-control" />
+                </div>
+            </div>
+            <div class="col">
+            </div>
+        </div>
+        <div class="row justify-content-center mb-3">
+            <div class="col">
+                <h4>Current code</h4>
+            </div>
+            <div class="col">
+                <div class="input-group">
+                    <input type="text" id="code" class="form-control" />
+                </div>
+            </div>
+            <div class="col">
+            </div>
+        </div>
+        <div class="row justify-content-center mb-3">
+            <div class="col">
+                <h4>Total qty</h4>
+            </div>
+            <div class="col">
+                <div class="input-group">
+                    <input type="number" id="total-qty" class="form-control" readonly="readonly" placeholder="Total qty" aria-label="Total qty" aria-describedby="total-qty-unit">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="total-qty-unit">(pcs)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+            </div>
+        </div>
+        <div class="row justify-content-center mb-3">
+            <div class="col">
+                <h4>OK</h4>
+            </div>
+            <div class="col">
+                <div class="input-group">
+                    <input type="number" id="ok-qty" class="form-control" readonly="readonly" placeholder="OK qty" aria-label="OK qty" aria-describedby="ok-qty-unit">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="ok-qty-unit">(pcs)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group">
+                    <input type="number" id="ok-percent" class="form-control" readonly="readonly" placeholder="OK percent" aria-label="OK percent" aria-describedby="ok-percent-unit">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="ok-percent-unit">(%)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center mb-3">
+            <div class="col">
+                <h4>NG</h4>
+            </div>
+            <div class="col">
+                <div class="input-group">
+                    <input type="number" id="ng-qty" class="form-control" readonly="readonly" placeholder="NG qty" aria-label="NG qty" aria-describedby="ng-qty-unit">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="ng-qty-unit">(pcs)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group">
+                    <input type="number" id="ng-percent" class="form-control" readonly="readonly" placeholder="NG percent" aria-label="NG percent" aria-describedby="ng-percent-unit">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="ng-percent-unit">(%)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/pages/main.js" asp-append-version="true"></script>
+}

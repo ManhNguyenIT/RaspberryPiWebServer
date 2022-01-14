@@ -1,0 +1,27 @@
+﻿@page "/monitor"
+@using WebApp.Models
+@model WebApp.Pages.MonitorModel
+
+<h2>Monitor</h2>
+@(Html.DevExtreme().DataGrid<Item>()
+    .ID("gridContainer")
+    .Visible(false)
+    .ShowBorders(true)
+    .RepaintChangesOnly(true)
+    .HighlightChanges(true)
+    .Columns(columns => {
+        columns.AddFor(m => m.Name).DataField("Name");
+        columns.Add().Caption("Type").DataField("Name");
+        columns.AddFor(m => m.Pin).DataField("Pin");
+        columns.AddFor(m => m.Value).DataField("Value")
+            .CellTemplate(@<text>
+                <span class="<%- data.Value ? 'text-green' : 'text-red' %>">
+                    <%- text %>
+                </span>
+            </text>);
+    })
+)
+@section Scripts{
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/pages/monitor.js" asp-append-version="true"></script>
+}
