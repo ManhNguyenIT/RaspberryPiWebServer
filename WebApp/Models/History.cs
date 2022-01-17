@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,5 +20,8 @@ namespace WebApp.Models
         public string Code { get; set; }
         public string Template { get; set; }
         public DateTime Created { get; set; }
+
+        [NotMapped]
+        public bool isCount { get; set; }
     }
 }

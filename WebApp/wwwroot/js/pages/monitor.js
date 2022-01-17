@@ -16,6 +16,7 @@ $(() => {
     });
 
     connection.on("Monitor", function (data) {
+        debugger
         let inputs = data.Inputs;
         for (var i = 0; i < inputs.length; i++) {
             store.push([{ type: 'update', key: inputs[i].Pin, inputs[i] }]);

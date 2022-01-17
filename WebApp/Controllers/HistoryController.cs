@@ -44,12 +44,15 @@ namespace WebApp.Controllers
                     return BadRequest($"Cannot find Output with name {_item.Name} and pin {_item.Pin}");
                 }
 
-                await _monitorService.WriteAsync(_item,-_settings.Delay);
+                await _monitorService.WriteAsync(_item, _settings.Delay);
 
                 var entity = new History();
                 JsonConvert.PopulateObject(values, entity);
 
-                await _service.Add(entity);
+                if (entity.isCount)
+                {
+                    await _service.Add(entity);
+                }
 
                 var querry = _service.GetAll().Where(i => i.Template == entity.Template && i.Model == entity.Model && from < i.Created && i.Created < to);
 

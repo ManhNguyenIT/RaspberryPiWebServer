@@ -7,10 +7,13 @@ $(() => {
     let isRunning = false;
     let isSensor = false;
     let isSubmit = false;
+    let isCount = false;
     let running = $('#running')
     let setting = $('#setting')
     let sensorOn = $('#sensor-on')
     let sensorOff = $('#sensor-off')
+    let count = $('#count')
+    let noCount = $('#no-count')
     let model = $('#model')
     let template = $('#template')
     let code = $('#code')
@@ -57,7 +60,6 @@ $(() => {
     //}).catch(function (err) {
     //    return console.error(err.toString());
     //});
-
     function onRunning() {
         isRunning = true;
         running.removeClass('btn-outline-success')
@@ -114,6 +116,22 @@ $(() => {
         });
     }
 
+    count.on("click", function (e) {
+        history.isCount = true;
+        count.removeClass('btn-outline-success')
+        count.addClass('btn-success')
+        noCount.removeClass('btn-info')
+        noCount.addClass('btn-outline-info')
+    })
+
+    noCount.on("click", function (e) {
+        history.isCount = false;
+        noCount.removeClass('btn-outline-info')
+        noCount.addClass('btn-info')
+        count.removeClass('btn-success')
+        count.addClass('btn-outline-success')
+    })
+
     template.on("change", function (e) {
         let value = e.target.value
         history.template = value;
@@ -142,11 +160,11 @@ $(() => {
         if (value === history.template) {
             code.addClass('bg-success text-white')
             console.log('bg-success text-white')
-            history = { ...history, ...{ name: "OK", pin: 2 } }
+            history = { ...history, ...{ name: "OK", pin: 10 } }
         } else {
             code.addClass('bg-danger text-white')
             console.log('bg-danger text-white')
-            history = { ...history, ...{ name: "NG", pin: 3 } }
+            history = { ...history, ...{ name: "NG", pin: 12 } }
         }
 
         if (isRunning && isSensor && !isSubmit && history.model !== '' && history.template !== '' && history.code !== '') {
@@ -178,6 +196,7 @@ $(() => {
     setting.on('click', function () {
         onSetting();
     })
+    count.click();
     onSetting();
     //setTimeout(function () {
     //    let data = { Inputs: [{ Pin: 1, Value: 0 }] };
