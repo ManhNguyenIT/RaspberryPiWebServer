@@ -16,11 +16,13 @@
             .Columns(a =>
                     {
                         a.AddFor(m => m.StartAt)
+                            .Caption("Date")
                             .Format(Format.ShortDate)
                             .SortOrder(SortOrder.Desc);
 
                         a.AddFor(m => m.StartAt)
-                            .Format(Format.ShortTime);
+                            .Format(Format.ShortTime)
+                            .SortOrder(SortOrder.Asc);
                     });
         columns.AddFor(m => m.Template);
         columns.AddFor(m => m.Total);

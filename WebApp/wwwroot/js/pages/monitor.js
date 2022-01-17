@@ -1,6 +1,7 @@
 ﻿"use strict";
 
 $(() => {
+    let start = true;
     let connection = new signalR.HubConnectionBuilder()
         .withUrl("/hubs/monitor")
         .withAutomaticReconnect()
@@ -8,22 +9,32 @@ $(() => {
 
     //Disable the send button until connection is established.
     //document.getElementById("sendButton").disabled = true;
-    let store = new DevExpress.data.CustomStore({
-        load() {
-            return [];
-        },
-        key: 'Pin',
-    });
-
+    let store;
     connection.on("Monitor", function (data) {
-        debugger
-        let inputs = data.Inputs;
-        for (var i = 0; i < inputs.length; i++) {
-            store.push([{ type: 'update', key: inputs[i].Pin, inputs[i] }]);
-        }
-        let outputs = data.Outputs;
-        for (var i = 0; i < outputs.length; i++) {
-            store.push([{ type: 'update', key: outputs[i].Pin, outputs[i] }]);
+        data = JSON.parse(data);
+        if (start) {
+            start = false;
+            store = new DevExpress.data.CustomStore({
+                load() {
+                    return [...data.Inputs.map(function (i) {
+                        return { ...i, ...{ Type: "INPUT" } };
+                    }), ...data.Outputs.map(function (i) {
+                        return { ...i, ...{ Type: "OUTPUT" } }
+                    })];
+                },
+                key: 'Pin',
+            });
+
+            $("#gridContainer").dxDataGrid({
+                dataSource: store,
+                visible: true
+            });
+        } else {
+            [...data.Inputs.map(function (i) {
+                return { ...i, ...{ Type: "INPUT" } }
+            }), ...data.Outputs.map(function (i) {
+                return { ...i, ...{ Type: "OUTPUT" } }
+            })].forEach((e, i) => store.push([{ type: 'update', key: e.Pin, e }]));
         }
     });
 
@@ -31,12 +42,5 @@ $(() => {
         console.log('started')
     }).catch(function (err) {
         return console.error(err.toString());
-    });
-
-    document.getElementById("blink").addEventListener("click", function (event) {
-        connection.invoke("ClickAsync", true).catch(function (err) {
-            return console.error(err.toString());
-        });
-        event.preventDefault();
     });
 });

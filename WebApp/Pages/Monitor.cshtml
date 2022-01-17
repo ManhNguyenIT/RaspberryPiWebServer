@@ -10,18 +10,18 @@
     .RepaintChangesOnly(true)
     .HighlightChanges(true)
     .Columns(columns => {
-        columns.AddFor(m => m.Name).DataField("Name");
-        columns.Add().Caption("Type").DataField("Name");
-        columns.AddFor(m => m.Pin).DataField("Pin");
-        columns.AddFor(m => m.Value).DataField("Value")
+        columns.Add().DataField("Name");
+        columns.Add().DataField("Type");
+        columns.Add().DataField("Pin");
+        columns.Add().DataField("Value")
             .CellTemplate(@<text>
-                <span class="<%- data.Value ? 'text-green' : 'text-red' %>">
-                    <%- text %>
-                </span>
-            </text>);
+        <span class="<%- data.Value ? 'text-green' : 'text-red' %>">
+            <%- data.Value ? 1 : 0 %>
+        </span>
+    </text>);
     })
 )
 @section Scripts{
-    <script src="~/js/signalr/dist/browser/signalr.js"></script>
-    <script src="~/js/pages/monitor.js" asp-append-version="true"></script>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/pages/monitor.js" asp-append-version="true"></script>
 }
