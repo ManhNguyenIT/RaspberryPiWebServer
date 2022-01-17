@@ -32,9 +32,10 @@ $(() => {
     //document.getElementById("sendButton").disabled = true;
 
     connection.on("Monitor", function (data) {
+        data = JSON.parse(data);
         let sensorData = data.Inputs.find(i => i.Pin === sensorPin);
         if (sensorData !== null) {
-            if (sensorData.Value === 0) {
+            if (sensorData.Value === false) {
                 isSensor = true;
                 sensorOn.removeClass('btn-outline-success')
                 sensorOn.addClass('btn-success')
@@ -55,11 +56,6 @@ $(() => {
         }
     });
 
-    //connection.start().then(function () {
-    //    console.log('started')
-    //}).catch(function (err) {
-    //    return console.error(err.toString());
-    //});
     function onRunning() {
         isRunning = true;
         running.removeClass('btn-outline-success')
@@ -198,6 +194,12 @@ $(() => {
     })
     count.click();
     onSetting();
+
+    connection.start().then(function () {
+        console.log('started')
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });
     //setTimeout(function () {
     //    let data = { Inputs: [{ Pin: 1, Value: 0 }] };
     //    let sensorData = data.Inputs.find(i => i.Pin === sensorPin);
