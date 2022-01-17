@@ -3,7 +3,7 @@
 $(() => {
     let history = { model: '', template: '' };
 
-    let sensorPin = 1;
+    let sensorPin = 8;
     let isRunning = false;
     let isSensor = false;
     let isSubmit = false;

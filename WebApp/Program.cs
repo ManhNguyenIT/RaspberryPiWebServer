@@ -21,12 +21,9 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddRazorPages()
     .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
 
-if (!builder.Environment.IsDevelopment())
-{
-    builder.Services.AddSignalR();
-    builder.Services.AddSingleton<MonitorService>();
-    builder.Services.AddHostedService<MonitorWorker>();
-}
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<MonitorService>();
+builder.Services.AddHostedService<MonitorWorker>();
 
 builder.Services.AddScoped<IEntityRepository<History>, HistoryRepository>();
 builder.Services.AddScoped<IEntityService<History>, HistoryService>();
@@ -54,9 +51,6 @@ app.MapControllers();
 app.MapDefaultControllerRoute();
 app.MapRazorPages();
 
-if (!app.Environment.IsDevelopment())
-{
-    app.MapHub<MonitorHub>("/hubs/monitor");
-}
+app.MapHub<MonitorHub>("/hubs/monitor");
 
 app.Run();
