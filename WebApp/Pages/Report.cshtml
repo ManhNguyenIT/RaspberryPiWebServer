@@ -24,13 +24,13 @@
                             .Format(Format.ShortTime)
                             .SortOrder(SortOrder.Asc);
                     });
+        columns.AddFor(m => m.Model);
         columns.AddFor(m => m.Template);
         columns.AddFor(m => m.Total);
         columns.Add()
             .Caption("Sản lượng(pcs)")
             .Columns(a =>
                     {
-                        a.AddFor(m => m.Total);
                         a.AddFor(m => m.Ok);
                         a.AddFor(m => m.Ng);
                     });
@@ -38,8 +38,8 @@
             .Caption("Tỉ lệ đạt(%)")
             .Columns(a =>
                     {
-                        a.AddFor(m => m.OkRate).Caption("Tỉ lệ OK");
-                        a.AddFor(m => m.NgRate).Caption("Tỉ lệ NG");
+                        a.AddFor(m => m.OkRate).Format("#0.0%").Caption("Tỉ lệ OK");
+                        a.AddFor(m => m.NgRate).Format("#0.0%").Caption("Tỉ lệ NG");
                     });
     })
     .SearchPanel(searchPanel => searchPanel

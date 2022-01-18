@@ -15,7 +15,7 @@
         columns.Add().DataField("Pin");
         columns.Add().DataField("Value")
             .CellTemplate(@<text>
-        <span class="<%- data.Value ? 'text-green' : 'text-red' %>">
+        <span class="<%- data.Value ? 'text-success' : 'text-danger' %>">
             <%- data.Value ? 1 : 0 %>
         </span>
     </text>);

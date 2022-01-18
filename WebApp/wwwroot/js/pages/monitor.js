@@ -3,43 +3,47 @@
 $(() => {
     let start = true;
     let connection = new signalR.HubConnectionBuilder()
+        .configureLogging(signalR.LogLevel.Information)
         .withUrl("/hubs/monitor")
         .withAutomaticReconnect()
         .build();
 
     //Disable the send button until connection is established.
     //document.getElementById("sendButton").disabled = true;
-    let store;
-    connection.on("Monitor", function (data) {
-        data = JSON.parse(data);
-        if (start) {
-            start = false;
-            store = new DevExpress.data.CustomStore({
-                load() {
-                    return [...data.Inputs.map(function (i) {
-                        return { ...i, ...{ Type: "INPUT" } };
-                    }), ...data.Outputs.map(function (i) {
-                        return { ...i, ...{ Type: "OUTPUT" } }
-                    })];
-                },
-                key: 'Pin',
-            });
-
-            $("#gridContainer").dxDataGrid({
-                dataSource: store,
-                visible: true
-            });
-        } else {
-            [...data.Inputs.map(function (i) {
-                return { ...i, ...{ Type: "INPUT" } }
-            }), ...data.Outputs.map(function (i) {
-                return { ...i, ...{ Type: "OUTPUT" } }
-            })].forEach((e, i) => store.push([{ type: 'update', key: e.Pin, e }]));
-        }
-    });
-
     connection.start().then(function () {
-        console.log('started')
+        let store = [];
+        let dataSource = new DevExpress.data.ArrayStore({
+            key: 'Pin',
+            data: store,
+        });
+        connection.on("Monitor", function (data) {
+            data = JSON.parse(data);
+            if (start) {
+                start = false;
+                [...data.Inputs.map(function (i) {
+                    return { ...i, ...{ Type: "INPUT" } }
+                }), ...data.Outputs.map(function (i) {
+                    return { ...i, ...{ Type: "OUTPUT" } }
+                })].map(e => {
+                    store.push(e)
+                });
+
+                $("#gridContainer").dxDataGrid({
+                    dataSource: dataSource,
+                    reshapeOnPush: true,
+                    visible: true
+                });
+            } else {
+                [...data.Inputs.map(function (i) {
+                    return { ...i, ...{ Type: "INPUT" } }
+                }), ...data.Outputs.map(function (i) {
+                    return { ...i, ...{ Type: "OUTPUT" } }
+                })].map(e => {
+                    dataSource.push([{ type: 'update', key: e.Pin, data: e }])
+                });
+            }
+        });
+
     }).catch(function (err) {
         return console.error(err.toString());
     });

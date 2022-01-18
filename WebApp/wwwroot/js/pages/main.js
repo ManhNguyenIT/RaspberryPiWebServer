@@ -7,7 +7,6 @@ $(() => {
     let isRunning = false;
     let isSensor = false;
     let isSubmit = false;
-    let isCount = false;
     let running = $('#running')
     let setting = $('#setting')
     let sensorOn = $('#sensor-on')
@@ -24,37 +23,10 @@ $(() => {
     let ngPercent = $('#ng-percent')
 
     let connection = new signalR.HubConnectionBuilder()
+        .configureLogging(signalR.LogLevel.Information)
         .withUrl("/hubs/monitor")
         .withAutomaticReconnect()
         .build();
-
-    //Disable the send button until connection is established.
-    //document.getElementById("sendButton").disabled = true;
-
-    connection.on("Monitor", function (data) {
-        data = JSON.parse(data);
-        let sensorData = data.Inputs.find(i => i.Pin === sensorPin);
-        if (sensorData !== null) {
-            if (sensorData.Value === false) {
-                isSensor = true;
-                sensorOn.removeClass('btn-outline-success')
-                sensorOn.addClass('btn-success')
-                sensorOff.removeClass('btn-danger')
-                sensorOff.addClass('btn-outline-danger')
-                console.log('started')
-            } else {
-                isSubmit = false;
-                isSensor = false;
-                history.code = '';
-                code.val(history.code);
-                sensorOn.removeClass('btn-success')
-                sensorOn.addClass('btn-outline-success')
-                sensorOff.removeClass('btn-outline-danger')
-                sensorOff.addClass('btn-danger')
-                console.log('finished')
-            }
-        }
-    });
 
     function onRunning() {
         isRunning = true;
@@ -98,7 +70,7 @@ $(() => {
             dataType: "json",
             data: JSON.stringify(history),
             success: function (res) {
-                DevExpress.ui.notify('Done', 'success', 600);
+                //DevExpress.ui.notify('Done', 'success', 600);
                 totalQty.val(res.Ok + res.Ng);
                 okQty.val(res.Ok);
                 ngQty.val(res.Ng);
@@ -106,7 +78,6 @@ $(() => {
                 ngPercent.val(res.Ok + res.Ng === 0 ? 0 : (res.Ng * 100 / (res.Ok + res.Ng)).toFixed(2));
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                debugger
                 DevExpress.ui.notify(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText, 'error', 600);
             }
         });
@@ -167,10 +138,10 @@ $(() => {
             isSubmit = true
 
             $.ajax({
-                url: 'history',
+                url: 'api/history/post',
                 type: 'POST',
                 contentType: "application/json; charset=utf-8",
-                dataType: "json",
+                //dataType: "json",
                 data: JSON.stringify(history),
                 success: function (res) {
                     DevExpress.ui.notify('Done', 'success', 600);
@@ -196,39 +167,31 @@ $(() => {
     onSetting();
 
     connection.start().then(function () {
-        console.log('started')
+        connection.on("Monitor", function (data) {
+            data = JSON.parse(data);
+            let sensorData = data.Inputs.find(i => i.Pin === sensorPin);
+            if (sensorData !== null) {
+                if (sensorData.Value === false) {
+                    isSensor = true;
+                    sensorOn.removeClass('btn-outline-success')
+                    sensorOn.addClass('btn-success')
+                    sensorOff.removeClass('btn-danger')
+                    sensorOff.addClass('btn-outline-danger')
+                    console.log('started')
+                } else {
+                    isSubmit = false;
+                    isSensor = false;
+                    history.code = '';
+                    code.val(history.code);
+                    sensorOn.removeClass('btn-success')
+                    sensorOn.addClass('btn-outline-success')
+                    sensorOff.removeClass('btn-outline-danger')
+                    sensorOff.addClass('btn-danger')
+                    console.log('finished')
+                }
+            }
+        });
     }).catch(function (err) {
         return console.error(err.toString());
     });
-    //setTimeout(function () {
-    //    let data = { Inputs: [{ Pin: 1, Value: 0 }] };
-    //    let sensorData = data.Inputs.find(i => i.Pin === sensorPin);
-    //    if (sensorData !== null) {
-    //        if (sensorData.Value === 0) {
-    //            isSensor = true;
-    //            sensorOn.removeClass('btn-outline-success')
-    //            sensorOn.addClass('btn-success')
-    //            sensorOff.removeClass('btn-danger')
-    //            sensorOff.addClass('btn-outline-danger')
-    //            console.log('started')
-    //        } else {
-    //            isSubmit = false;
-    //            isSensor = false;
-    //            history.code = '';
-    //            code.val(history.code);
-    //            sensorOn.removeClass('btn-success')
-    //            sensorOn.addClass('btn-outline-success')
-    //            sensorOff.removeClass('btn-outline-danger')
-    //            sensorOff.addClass('btn-danger')
-    //            console.log('finished')
-    //        }
-    //    }
-    //}, 10000);
-
-    //document.getElementById("blink").addEventListener("click", function (event) {
-    //    connection.invoke("ClickAsync", true).catch(function (err) {
-    //        return console.error(err.toString());
-    //    });
-    //    event.preventDefault();
-    //});
 });

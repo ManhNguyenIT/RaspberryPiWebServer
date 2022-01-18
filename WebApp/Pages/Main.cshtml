@@ -1,5 +1,9 @@
 ﻿@page "/main"
 @using WebApp.Models
+@inject IAntiforgery antiforgery
+@{
+    var token = antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
+}
 <style>
     .col > * {
         width: 100%;

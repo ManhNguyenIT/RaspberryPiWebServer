@@ -22,7 +22,7 @@ namespace WebApp.Services
             {
                 await _hub.Clients.All.Monitor(Newtonsoft.Json.JsonConvert.SerializeObject(_service.Read()));
                 //Run the background service for every 10 seconds  
-                await Task.Delay(100, stoppingToken);
+                await Task.Delay(500, stoppingToken);
             }
         }
     }

@@ -32,31 +32,48 @@ namespace WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromForm] string values)
         {
+            try
+            {
+                var entity = new History();
+                JsonConvert.PopulateObject(values, entity);
+                entity= await _service.Add(entity);
+                return Ok(entity);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("post")]
+        public async Task<IActionResult> PostAsync([FromBody] object values)
+        {
             DateTime from = DateTime.Now.Date;
             DateTime to = DateTime.Now.Date.AddDays(1);
             try
             {
                 var item = new Item();
-                JsonConvert.PopulateObject(values, item);
+                JsonConvert.PopulateObject(values.ToString(), item);
                 var _item = _settings.Outputs.Where(i => i.Name == item.Name && i.Pin == item.Pin).FirstOrDefault();
                 if (_item == null)
                 {
-                    return BadRequest($"Cannot find Output with name {_item.Name} and pin {_item.Pin}");
+                    return BadRequest($"Cannot find Output with name {item.Name} and pin {item.Pin}");
                 }
 
                 await _monitorService.WriteAsync(_item, _settings.Delay);
 
                 var entity = new History();
-                JsonConvert.PopulateObject(values, entity);
+                JsonConvert.PopulateObject(values.ToString(), entity);
 
                 if (entity.isCount)
                 {
                     await _service.Add(entity);
                 }
 
-                var querry = _service.GetAll().Where(i => i.Template == entity.Template && i.Model == entity.Model && from < i.Created && i.Created < to);
+                var querry = _service.GetAll()
+                    .Where(i => i.Template == entity.Template && i.Model == entity.Model && from < i.Created && i.Created < to);
 
-                return Ok(new { Ok = querry.Where(i => i.Code == i.Template), Ng = querry.Where(i => i.Code != i.Template) });
+                return Ok(new { Ok = querry.Where(i => i.Code == i.Template).Count(), Ng = querry.Where(i => i.Code != i.Template).Count() });
             }
             catch (Exception ex)
             {
@@ -71,7 +88,8 @@ namespace WebApp.Controllers
             DateTime to = DateTime.Now.Date.AddDays(1);
             try
             {
-                var querry = _service.GetAll().Where(i => i.Template == history.Template && i.Model == history.Model && from < i.Created && i.Created < to);
+                var querry = _service.GetAll()
+                    .Where(i => i.Template == history.Template && i.Model == history.Model && from < i.Created && i.Created < to);
                 return Ok(new { Ok = querry.Where(i => i.Code == i.Template).Count(), Ng = querry.Where(i => i.Code != i.Template).Count() });
             }
             catch (Exception ex)
@@ -88,17 +106,23 @@ namespace WebApp.Controllers
             try
             {
                 var table = _service.GetAll().Where(i => from < i.Created && i.Created < to);
-
-                var querry = table.GroupBy(i => new { i.Code, i.Template })
-                    .Select(i => new { i.Key.Code, i.Key.Template, StartAt = i.Min(g => g.Created) });
-
+                var querry = table.GroupBy(i => new { i.Template, i.Model })
+                    .Select(i => new { i.Key.Template, i.Key.Model, StartAt = i.Min(g => g.Created), Ok = i.Where(g => g.Code==g.Template).Count(), Total = i.Count() });
                 var table2 = from i in table
-                             join q in querry on new { i.Code, i.Template } equals new { q.Code, q.Template }
-                             select new { i.Code, i.Template, q.StartAt };
+                             join q in querry on new { i.Template, i.Model } equals new { q.Template, q.Model }
+                             select new { i.Template, i.Model, q.StartAt, q.Ok, q.Total };
 
                 var res = (await table2.ToListAsync())
-                        .GroupBy(i => new { i.Code, i.Template, i.StartAt })
-                        .Select(i => new Report() { Code = i.Key.Code, Template = i.Key.Template, StartAt = i.Key.StartAt, Total = i.Count(), Ok = i.Select(h => h.Code == h.Template).Count() }).ToList();
+                        .GroupBy(i => new { i.Template, i.Model, i.StartAt })
+                        .Select(i =>
+                        new Report()
+                        {
+                            Template = i.Key.Template,
+                            Model=i.Key.Model,
+                            StartAt = i.Key.StartAt,
+                            Total = i.Max(g => g.Total),
+                            Ok = i.Max(g => g.Ok)
+                        }).ToList();
 
                 return DataSourceLoader.Load(res, loadOptions);
             }
