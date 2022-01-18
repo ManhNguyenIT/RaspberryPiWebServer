@@ -14,7 +14,7 @@ function exporting(e) {
         headerRow.height = 30;
         worksheet.mergeCells(2, 1, 2, 9);
 
-        headerRow.getCell(1).value = 'Report';
+        headerRow.getCell(1).value = 'Báo cáo';
         headerRow.getCell(1).font = { name: 'Segoe UI Light', size: 22 };
         headerRow.getCell(1).alignment = { horizontal: 'center' };
 

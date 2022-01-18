@@ -2,7 +2,7 @@
 @using WebApp.Models
 @model WebApp.Pages.ReportModel
 
-<h2>Report</h2>
+<h2>Báo cáo</h2>
 
 @(Html.DevExtreme().DataGrid<Report>()
     .ShowBorders(true)
@@ -16,17 +16,18 @@
             .Columns(a =>
                     {
                         a.AddFor(m => m.StartAt)
-                            .Caption("Date")
+                            .Caption("Ngày")
                             .Format(Format.ShortDate)
                             .SortOrder(SortOrder.Desc);
 
                         a.AddFor(m => m.StartAt)
+                            .Caption("Giờ bắt đầu")
                             .Format(Format.ShortTime)
                             .SortOrder(SortOrder.Asc);
                     });
         columns.AddFor(m => m.Model);
-        columns.AddFor(m => m.Template);
-        columns.AddFor(m => m.Total);
+        columns.AddFor(m => m.Template).Caption("Code mẫu");
+        columns.AddFor(m => m.Total).Caption("Tồng sản lượng");
         columns.Add()
             .Caption("Sản lượng(pcs)")
             .Columns(a =>
@@ -45,7 +46,7 @@
     .SearchPanel(searchPanel => searchPanel
         .Visible(true)
         .Width(240)
-        .Placeholder("Search...")
+        .Placeholder("Tìm kiếm...")
     )
     .Export(e => e.Enabled(true))
     .ShowBorders(true)

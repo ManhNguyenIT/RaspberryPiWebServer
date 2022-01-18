@@ -18,9 +18,9 @@ $(() => {
     let code = $('#code')
     let totalQty = $('#total-qty')
     let okQty = $('#ok-qty')
-    let okPercent = $('#ok-percent')
+    let okRate = $('#ok-rate')
     let ngQty = $('#ng-qty')
-    let ngPercent = $('#ng-percent')
+    let ngRate = $('#ng-rate')
 
     let connection = new signalR.HubConnectionBuilder()
         .configureLogging(signalR.LogLevel.Information)
@@ -74,8 +74,8 @@ $(() => {
                 totalQty.val(res.Ok + res.Ng);
                 okQty.val(res.Ok);
                 ngQty.val(res.Ng);
-                okPercent.val(res.Ok + res.Ng === 0 ? 0 : (res.Ok * 100 / (res.Ok + res.Ng)).toFixed(2));
-                ngPercent.val(res.Ok + res.Ng === 0 ? 0 : (res.Ng * 100 / (res.Ok + res.Ng)).toFixed(2));
+                okRate.val(res.Ok + res.Ng === 0 ? 0 : (res.Ok * 100 / (res.Ok + res.Ng)).toFixed(2));
+                ngRate.val(res.Ok + res.Ng === 0 ? 0 : (res.Ng * 100 / (res.Ok + res.Ng)).toFixed(2));
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 DevExpress.ui.notify(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText, 'error', 600);
@@ -148,8 +148,8 @@ $(() => {
                     totalQty.val(res.Ok + res.Ng);
                     okQty.val(res.Ok);
                     ngQty.val(res.Ng);
-                    okPercent.val(res.Ok + res.Ng === 0 ? 0 : (res.Ok * 100 / (res.Ok + res.Ng)).toFixed(2));
-                    ngPercent.val(res.Ok + res.Ng === 0 ? 0 : (res.Ng * 100 / (res.Ok + res.Ng)).toFixed(2));
+                    okRate.val(res.Ok + res.Ng === 0 ? 0 : (res.Ok * 100 / (res.Ok + res.Ng)).toFixed(2));
+                    ngRate.val(res.Ok + res.Ng === 0 ? 0 : (res.Ng * 100 / (res.Ok + res.Ng)).toFixed(2));
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
                     DevExpress.ui.notify(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText, 'error', 600);

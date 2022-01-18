@@ -16,151 +16,210 @@
         padding: 50px;
         font-family: "Helvetica Neue","Segoe UI",helvetica,verdana,sans-serif;
     }
+
+    .has-float-label {
+        display: block;
+        position: relative
+    }
+
+        .has-float-label label, .has-float-label > span {
+            position: absolute;
+            cursor: text;
+            font-size: 75%;
+            opacity: 1;
+            -webkit-transition: all .2s;
+            transition: all .2s;
+            top: -.5em;
+            left: .75rem;
+            z-index: 3;
+            line-height: 1;
+            padding: 0 1px
+        }
+
+            .has-float-label label::after, .has-float-label > span::after {
+                content: " ";
+                display: block;
+                position: absolute;
+                background: #fff;
+                height: 2px;
+                top: 50%;
+                left: -.2em;
+                right: -.2em;
+                z-index: -1
+            }
+
+        .has-float-label .form-control::-webkit-input-placeholder {
+            opacity: 1;
+            -webkit-transition: all .2s;
+            transition: all .2s
+        }
+
+        .has-float-label .form-control:placeholder-shown:not(:focus)::-webkit-input-placeholder {
+            opacity: 0
+        }
+
+        .has-float-label .form-control:placeholder-shown:not(:focus) + * {
+            font-size: 150%;
+            opacity: .5;
+            top: .3em
+        }
+
+    .input-group .has-float-label {
+        display: table-cell
+    }
+
+        .input-group .has-float-label .form-control {
+            border-radius: .25rem
+        }
+
+        .input-group .has-float-label:not(:last-child), .input-group .has-float-label:not(:last-child) .form-control {
+            border-bottom-right-radius: 0;
+            border-top-right-radius: 0;
+            border-right: 0
+        }
+
+        .input-group .has-float-label:not(:first-child), .input-group .has-float-label:not(:first-child) .form-control {
+            border-bottom-left-radius: 0;
+            border-top-left-radius: 0
+        }
 </style>
 <div>
     <div class="h-100 d-flex justify-content-left align-items-left"><h3 class="header"></h3></div>
     <div class="box-body col-xs-12 col-sm-10 col-md-8 offset-sm-1 offset-md-2">
         <div class="row justify-content-center mb-3">
             <div class="col">
-                <h4>Status</h4>
+                <h4>Trạng thái máy:</h4>
             </div>
             <div class="col">
                 <button id="running" class="btn btn-outline-success">
-                    RUNNING
+                    Đang hoạt động
                 </button>
             </div>
             <div class="col">
                 <button id="setting" class="btn btn-warning">
-                    SETTING
+                    Cài đặt
                 </button>
             </div>
         </div>
         <div class="row justify-content-center mb-3">
             <div class="col">
-                <h4>Sensor</h4>
+                <h4>Cảm biến:</h4>
             </div>
             <div class="col">
                 <button id="sensor-on" class="btn btn-outline-success">
-                    ON
+                    Đóng
                 </button>
             </div>
             <div class="col">
                 <button id="sensor-off" class="btn btn-danger">
-                    OFF
+                    Mở
                 </button>
             </div>
         </div>
         <div class="row justify-content-center mb-3">
             <div class="col">
-                <h4>Mode</h4>
+                <h4>Chế độ vận hành:</h4>
             </div>
             <div class="col">
                 <button id="count" class="btn btn-outline-success">
-                    COUNT
+                    Đếm
                 </button>
             </div>
             <div class="col">
                 <button id="no-count" class="btn btn-info">
-                    NO COUNT
+                    Không đếm
                 </button>
             </div>
         </div>
         <div class="row justify-content-center mb-3">
             <div class="col">
-                <h4>Model</h4>
+                <h4>Model:</h4>
             </div>
             <div class="col">
-                <div class="input-group">
-                    <input type="text" id="model" class="form-control" />
-                </div>
-            </div>
-            <div class="col">
-            </div>
-        </div>
-        <div class="row justify-content-center mb-3">
-            <div class="col">
-                <h4>Sample code</h4>
-            </div>
-            <div class="col">
-                <div class="input-group">
-                    <input type="text" id="template" class="form-control" />
-                </div>
+                <span class="has-float-label">
+                    <input type="text" id="model" class="form-control" required>
+                    <label for="model">Model</label>
+                </span>
             </div>
             <div class="col">
             </div>
         </div>
         <div class="row justify-content-center mb-3">
             <div class="col">
-                <h4>Current code</h4>
+                <h4>Code mẫu:</h4>
             </div>
             <div class="col">
-                <div class="input-group">
-                    <input type="text" id="code" class="form-control" />
-                </div>
-            </div>
-            <div class="col">
-            </div>
-        </div>
-        <div class="row justify-content-center mb-3">
-            <div class="col">
-                <h4>Total qty</h4>
-            </div>
-            <div class="col">
-                <div class="input-group">
-                    <input type="number" id="total-qty" class="form-control" readonly="readonly" placeholder="Total qty" aria-label="Total qty" aria-describedby="total-qty-unit">
-                    <div class="input-group-append">
-                        <span class="input-group-text" id="total-qty-unit">(pcs)</span>
-                    </div>
-                </div>
+                <span class="has-float-label">
+                    <input type="text" id="template" class="form-control" required>
+                    <label for="template">Code mẫu</label>
+                </span>
             </div>
             <div class="col">
             </div>
         </div>
         <div class="row justify-content-center mb-3">
             <div class="col">
-                <h4>OK</h4>
+                <h4>Code hiện tại:</h4>
             </div>
             <div class="col">
-                <div class="input-group">
-                    <input type="number" id="ok-qty" class="form-control" readonly="readonly" placeholder="OK qty" aria-label="OK qty" aria-describedby="ok-qty-unit">
-                    <div class="input-group-append">
-                        <span class="input-group-text" id="ok-qty-unit">(pcs)</span>
-                    </div>
-                </div>
+                <span class="has-float-label">
+                    <input type="text" id="code" class="form-control" required>
+                    <label for="code">Code hiện tại</label>
+                </span>
             </div>
             <div class="col">
-                <div class="input-group">
-                    <input type="number" id="ok-percent" class="form-control" readonly="readonly" placeholder="OK percent" aria-label="OK percent" aria-describedby="ok-percent-unit">
-                    <div class="input-group-append">
-                        <span class="input-group-text" id="ok-percent-unit">(%)</span>
-                    </div>
-                </div>
             </div>
         </div>
         <div class="row justify-content-center mb-3">
             <div class="col">
-                <h4>NG</h4>
+                <h4>Tổng sản lượng:</h4>
             </div>
             <div class="col">
-                <div class="input-group">
-                    <input type="number" id="ng-qty" class="form-control" readonly="readonly" placeholder="NG qty" aria-label="NG qty" aria-describedby="ng-qty-unit">
-                    <div class="input-group-append">
-                        <span class="input-group-text" id="ng-qty-unit">(pcs)</span>
-                    </div>
-                </div>
+                <span class="has-float-label">
+                    <input type="number" id="total-qty" class="form-control" readonly="readonly">
+                    <label for="total-qty">Tổng sản lượng(pcs)</label>
+                </span>
             </div>
             <div class="col">
-                <div class="input-group">
-                    <input type="number" id="ng-percent" class="form-control" readonly="readonly" placeholder="NG percent" aria-label="NG percent" aria-describedby="ng-percent-unit">
-                    <div class="input-group-append">
-                        <span class="input-group-text" id="ng-percent-unit">(%)</span>
-                    </div>
-                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center mb-3">
+            <div class="col">
+                <h4>Sản lượng OK:</h4>
+            </div>
+            <div class="col">
+                <span class="has-float-label">
+                    <input type="number" id="ok-qty" class="form-control" readonly="readonly">
+                    <label for="ok-qty">Sản lượng OK(pcs)</label>
+                </span>
+            </div>
+            <div class="col">
+                <span class="has-float-label">
+                    <input type="number" id="ok-rate" class="form-control" readonly="readonly">
+                    <label for="ok-percent">Tỉ lệ OK(%)</label>
+                </span>
+            </div>
+        </div>
+        <div class="row justify-content-center mb-3">
+            <div class="col">
+                <h4>Sản lượng NG:</h4>
+            </div>
+            <div class="col">
+                <span class="has-float-label">
+                    <input type="number" id="ng-qty" class="form-control" readonly="readonly">
+                    <label for="ok-qty">Sản lượng NG(pcs)</label>
+                </span>
+            </div>
+            <div class="col">
+                <span class="has-float-label">
+                    <input type="number" id="ng-rate" class="form-control" readonly="readonly">
+                    <label for="ok-percent">Tỉ lệ NG(%)</label>
+                </span>
             </div>
         </div>
     </div>
 </div>
 @section Scripts{
-    <script src="~/js/signalr/dist/browser/signalr.js"></script>
-    <script src="~/js/pages/main.js" asp-append-version="true"></script>
-}
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/pages/main.js" asp-append-version="true"></script>
+    }
