@@ -8,10 +8,10 @@ namespace WebApp.Services
     {
         private readonly Settings _settings;
         private readonly ILogger<MonitorService> _logger;
-        private readonly GpioController _controller;
+        //private readonly GpioController _controller;
         public MonitorService(IOptions<Settings> settings, ILogger<MonitorService> logger)
         {
-            _controller = new GpioController(PinNumberingScheme.Board);
+            //_controller = new GpioController(PinNumberingScheme.Board);
             _settings = settings?.Value;
             _logger = logger;
 
@@ -21,19 +21,19 @@ namespace WebApp.Services
                 _logger.LogInformation("*************INIT INPUT GPIO*************");
                 try
                 {
-                    for (int i = 0; i < _settings.Inputs.Length; i++)
-                    {
-                        Item input = _settings.Inputs[i];
-                        if (_controller.IsPinModeSupported(input.Pin, PinMode.InputPullDown))
-                        {
-                            _controller.OpenPin(input.Pin, PinMode.InputPullDown);
-                            input.Value = true;
-                        }
-                        else
-                        {
-                            throw new ArgumentException($"Pin {input.Pin} not support mode InputPullDown");
-                        }
-                    }
+                    //for (int i = 0; i < _settings.Inputs.Length; i++)
+                    //{
+                    //    Item input = _settings.Inputs[i];
+                    //    if (_controller.IsPinModeSupported(input.Pin, PinMode.InputPullDown))
+                    //    {
+                    //        _controller.OpenPin(input.Pin, PinMode.InputPullDown);
+                    //        input.Value = true;
+                    //    }
+                    //    else
+                    //    {
+                    //        throw new ArgumentException($"Pin {input.Pin} not support mode InputPullDown");
+                    //    }
+                    //}
                 }
                 catch (Exception ex)
                 {
@@ -42,20 +42,20 @@ namespace WebApp.Services
                 _logger.LogInformation("*************INIT OUTPUT GPIO*************");
                 try
                 {
-                    for (int i = 0; i < _settings.Outputs.Length; i++)
-                    {
-                        Item output = _settings.Outputs[i];
-                        if (_controller.IsPinModeSupported(output.Pin, PinMode.Output))
-                        {
-                            _controller.OpenPin(output.Pin, PinMode.Output);
-                            _controller.Write(output.Pin, PinValue.Low);
-                            output.Value = false;
-                        }
-                        else
-                        {
-                            throw new ArgumentException($"Pin {output.Pin} not support mode Output");
-                        }
-                    }
+                    //for (int i = 0; i < _settings.Outputs.Length; i++)
+                    //{
+                    //    Item output = _settings.Outputs[i];
+                    //    if (_controller.IsPinModeSupported(output.Pin, PinMode.Output))
+                    //    {
+                    //        _controller.OpenPin(output.Pin, PinMode.Output);
+                    //        _controller.Write(output.Pin, PinValue.Low);
+                    //        output.Value = false;
+                    //    }
+                    //    else
+                    //    {
+                    //        throw new ArgumentException($"Pin {output.Pin} not support mode Output");
+                    //    }
+                    //}
                 }
                 catch (Exception ex)
                 {
@@ -70,17 +70,17 @@ namespace WebApp.Services
             _logger.LogInformation($"WRITE {Newtonsoft.Json.JsonConvert.SerializeObject(item)}");
             if (_settings.Outputs.Any(i => i.Name == item.Name && i.Pin == item.Pin))
             {
-                try
-                {
-                    if (_controller.IsPinOpen(item.Pin))
-                    {
-                        _controller.Write(item.Pin, item.Value);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex.InnerException?.Message ?? ex.Message);
-                }
+                //try
+                //{
+                //    if (_controller.IsPinOpen(item.Pin))
+                //    {
+                //        _controller.Write(item.Pin, item.Value);
+                //    }
+                //}
+                //catch (Exception ex)
+                //{
+                //    _logger.LogError(ex.InnerException?.Message ?? ex.Message);
+                //}
             }
         }
 
@@ -89,19 +89,19 @@ namespace WebApp.Services
             _logger.LogInformation($"WRITE {Newtonsoft.Json.JsonConvert.SerializeObject(item)} with delay {Delay}ms");
             if (_settings.Outputs.Any(i => i.Name == item.Name && i.Pin == item.Pin))
             {
-                try
-                {
-                    if (_controller.IsPinOpen(item.Pin))
-                    {
-                        _controller.Write(item.Pin, PinValue.High);
-                        await Task.Delay(Delay);
-                        _controller.Write(item.Pin, PinValue.Low);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex.InnerException?.Message ?? ex.Message);
-                }
+                //try
+                //{
+                //    if (_controller.IsPinOpen(item.Pin))
+                //    {
+                //        _controller.Write(item.Pin, PinValue.High);
+                //        await Task.Delay(Delay);
+                //        _controller.Write(item.Pin, PinValue.Low);
+                //    }
+                //}
+                //catch (Exception ex)
+                //{
+                //    _logger.LogError(ex.InnerException?.Message ?? ex.Message);
+                //}
             }
         }
 
@@ -112,20 +112,20 @@ namespace WebApp.Services
                 return _settings;
             }
 
-            foreach (var item in _settings.Inputs)
-            {
-                try
-                {
-                    if (_controller.IsPinOpen(item.Pin))
-                    {
-                        item.Value = Equals(_controller.Read(item.Pin), PinValue.High);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex.InnerException?.Message ?? ex.Message);
-                }
-            }
+            //foreach (var item in _settings.Inputs)
+            //{
+            //    try
+            //    {
+            //        if (_controller.IsPinOpen(item.Pin))
+            //        {
+            //            item.Value = Equals(_controller.Read(item.Pin), PinValue.High);
+            //        }
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        _logger.LogError(ex.InnerException?.Message ?? ex.Message);
+            //    }
+            //}
 
             return _settings;
         }
