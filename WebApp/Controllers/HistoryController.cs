@@ -101,11 +101,9 @@ namespace WebApp.Controllers
         [HttpGet("report")]
         public async Task<object> Report(DataSourceLoadOptions loadOptions)
         {
-            DateTime from = DateTime.Now.Date;
-            DateTime to = DateTime.Now.Date.AddDays(1);
             try
             {
-                var table = _service.GetAll().Where(i => from < i.Created && i.Created < to);
+                var table = _service.GetAll();
                 var querry = table.GroupBy(i => new { i.Template, i.Model })
                     .Select(i => new { i.Key.Template, i.Key.Model, StartAt = i.Min(g => g.Created), Ok = i.Where(g => g.Code==g.Template).Count(), Total = i.Count() });
                 var table2 = from i in table

@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using WebApp.Models;
 using System.Device.Gpio;
-using System.Device.Gpio.Drivers;
 
 namespace WebApp.Services
 {
@@ -25,14 +24,14 @@ namespace WebApp.Services
                     for (int i = 0; i < _settings.Inputs.Length; i++)
                     {
                         Item input = _settings.Inputs[i];
-                        if (_controller.IsPinModeSupported(input.Pin, PinMode.InputPullUp))
+                        if (_controller.IsPinModeSupported(input.Pin, PinMode.InputPullDown))
                         {
-                            _controller.OpenPin(input.Pin, PinMode.InputPullUp);
+                            _controller.OpenPin(input.Pin, PinMode.InputPullDown);
                             input.Value = true;
                         }
                         else
                         {
-                            throw new ArgumentException($"Pin {input.Pin} not support mode InputPullUp");
+                            throw new ArgumentException($"Pin {input.Pin} not support mode InputPullDown");
                         }
                     }
                 }
@@ -49,8 +48,8 @@ namespace WebApp.Services
                         if (_controller.IsPinModeSupported(output.Pin, PinMode.Output))
                         {
                             _controller.OpenPin(output.Pin, PinMode.Output);
-                            _controller.Write(output.Pin, PinValue.High);
-                            output.Value = true;
+                            _controller.Write(output.Pin, PinValue.Low);
+                            output.Value = false;
                         }
                         else
                         {
@@ -94,9 +93,9 @@ namespace WebApp.Services
                 {
                     if (_controller.IsPinOpen(item.Pin))
                     {
-                        _controller.Write(item.Pin, item.Value);
+                        _controller.Write(item.Pin, PinValue.High);
                         await Task.Delay(Delay);
-                        _controller.Write(item.Pin, !item.Value);
+                        _controller.Write(item.Pin, PinValue.Low);
                     }
                 }
                 catch (Exception ex)
@@ -119,7 +118,7 @@ namespace WebApp.Services
                 {
                     if (_controller.IsPinOpen(item.Pin))
                     {
-                        item.Value = _controller.Read(item.Pin) == PinValue.High;
+                        item.Value = Equals(_controller.Read(item.Pin), PinValue.High);
                     }
                 }
                 catch (Exception ex)

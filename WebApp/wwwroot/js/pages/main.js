@@ -171,7 +171,7 @@ $(() => {
             data = JSON.parse(data);
             let sensorData = data.Inputs.find(i => i.Pin === sensorPin);
             if (sensorData !== null) {
-                if (sensorData.Value === false) {
+                if (sensorData.Value) {
                     isSensor = true;
                     sensorOn.removeClass('btn-outline-success')
                     sensorOn.addClass('btn-success')
