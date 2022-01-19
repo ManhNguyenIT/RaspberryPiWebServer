@@ -15,7 +15,7 @@
             .Caption("Ngày/Giờ")
             .Columns(a =>
                     {
-                        a.AddFor(m => m.StartAt)
+                        a.AddFor(m => m.Date)
                             .Caption("Ngày")
                             .Format(Format.ShortDate)
                             .SortOrder(SortOrder.Desc);
