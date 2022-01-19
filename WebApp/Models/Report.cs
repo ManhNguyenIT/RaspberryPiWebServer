@@ -9,6 +9,7 @@
         public Guid Id { get; set; }
         public string Template { get; set; }
         public string Model { get; set; }
+        public DateTime? Date { get; set; }
         public DateTime? StartAt { get; set; }
         public int? Total { get; set; }
         public int? Ok { get; set; }

@@ -104,23 +104,23 @@ namespace WebApp.Controllers
             try
             {
                 var table = _service.GetAll();
-                var querry = table.GroupBy(i => new { i.Template, i.Model })
-                    .Select(i => new { i.Key.Template, i.Key.Model, StartAt = i.Min(g => g.Created), Ok = i.Where(g => g.Code==g.Template).Count(), Total = i.Count() });
+                var querry = table.GroupBy(i => new { i.Template, i.Model, i.Created.Date })
+                    .Select(i => new { i.Key.Template, i.Key.Model, i.Key.Date, StartAt = i.Min(g => g.Created), Ok = i.Where(g => g.Code==g.Template).Count(), Total = i.Count() });
                 var table2 = from i in table
-                             join q in querry on new { i.Template, i.Model } equals new { q.Template, q.Model }
-                             select new { i.Template, i.Model, q.StartAt, q.Ok, q.Total };
+                             join q in querry on new { i.Template, i.Model, i.Created.Date } equals new { q.Template, q.Model, q.Date }
+                             select new { i.Template, i.Model, q.Date, q.StartAt, q.Ok, q.Total };
 
-                var res = (await table2.ToListAsync())
-                        .GroupBy(i => new { i.Template, i.Model, i.StartAt })
+                var res = await table2.GroupBy(i => new { i.Template, i.Model, i.Date, i.StartAt })
                         .Select(i =>
                         new Report()
                         {
                             Template = i.Key.Template,
                             Model=i.Key.Model,
+                            Date=i.Key.Date,
                             StartAt = i.Key.StartAt,
                             Total = i.Max(g => g.Total),
                             Ok = i.Max(g => g.Ok)
-                        }).ToList();
+                        }).ToListAsync();
 
                 return DataSourceLoader.Load(res, loadOptions);
             }
