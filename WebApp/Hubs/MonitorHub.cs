@@ -11,13 +11,5 @@ namespace WebApp.Hubs
         {
             _service = service;
         }
-        public async Task ClickAsync(bool value)
-        {
-            var settings = _service.Read();
-            Models.Item item = settings.Outputs.First();
-            item.Value = !item.Value;
-            _service.Write(item);
-            await Clients.All.Monitor(Newtonsoft.Json.JsonConvert.SerializeObject(_service.Read()));
-        }
     }
 }

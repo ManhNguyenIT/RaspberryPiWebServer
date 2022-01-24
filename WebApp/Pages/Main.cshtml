@@ -13,8 +13,16 @@
         font-size: 50px;
         font-weight: 300;
         letter-spacing: -.5px;
-        padding: 50px;
+        padding: 25px;
         font-family: "Helvetica Neue","Segoe UI",helvetica,verdana,sans-serif;
+    }
+
+    .btn-warning, .btn-warning:hover, .btn-outline-warning:hover, warning:not(:disabled):not(.disabled):active, .btn-warning:not(:disabled):not(.disabled).active, .show > .btn-warning.dropdown-toggle {
+        color: #fff!important   
+    }
+
+    .btn-outline-warning {
+        color: #ffc107
     }
 
     .has-float-label {
@@ -83,7 +91,10 @@
             border-top-left-radius: 0
         }
 </style>
-<div>
+<div id="popup">
+    <div id="password"></div>
+</div>
+<div class="container">
     <div class="h-100 d-flex justify-content-left align-items-left"><h3 class="header"></h3></div>
     <div class="box-body col-xs-12 col-sm-10 col-md-8 offset-sm-1 offset-md-2">
         <div class="row justify-content-center mb-3">
@@ -96,7 +107,7 @@
                 </button>
             </div>
             <div class="col">
-                <button id="setting" class="btn btn-warning">
+                <button id="setting" class="btn btn-outline-warning">
                     Cài đặt
                 </button>
             </div>
@@ -117,17 +128,12 @@
             </div>
         </div>
         <div class="row justify-content-center mb-3">
-            <div class="col">
-                <h4>Chế độ vận hành:</h4>
+            <div class="col-4">
+                <h4>Xác nhận lỗi:</h4>
             </div>
             <div class="col">
-                <button id="count" class="btn btn-outline-success">
-                    Đếm
-                </button>
-            </div>
-            <div class="col">
-                <button id="no-count" class="btn btn-info">
-                    Không đếm
+                <button id="error" class="btn btn-outline-info">
+                    Xác nhận
                 </button>
             </div>
         </div>
@@ -137,7 +143,7 @@
             </div>
             <div class="col">
                 <span class="has-float-label">
-                    <input type="text" id="model" class="form-control" required>
+                    <input type="text" id="model" class="form-control" readonly="readonly" required>
                     <label for="model">Model</label>
                 </span>
             </div>
@@ -150,7 +156,7 @@
             </div>
             <div class="col">
                 <span class="has-float-label">
-                    <input type="text" id="template" class="form-control" required>
+                    <input type="text" id="template" class="form-control" readonly="readonly" required>
                     <label for="template">Code mẫu</label>
                 </span>
             </div>
@@ -163,7 +169,7 @@
             </div>
             <div class="col">
                 <span class="has-float-label">
-                    <input type="text" id="code" class="form-control" required>
+                    <input type="text" id="code" class="form-control" readonly="readonly" required>
                     <label for="code">Code hiện tại</label>
                 </span>
             </div>
@@ -222,4 +228,4 @@
 @section Scripts{
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/pages/main.js" asp-append-version="true"></script>
-    }
+}

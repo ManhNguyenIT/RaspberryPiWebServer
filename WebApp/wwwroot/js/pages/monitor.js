@@ -20,11 +20,7 @@ $(() => {
             data = JSON.parse(data);
             if (start) {
                 start = false;
-                [...data.Inputs.map(function (i) {
-                    return { ...i, ...{ Type: "INPUT" } }
-                }), ...data.Outputs.map(function (i) {
-                    return { ...i, ...{ Type: "OUTPUT" } }
-                })].map(e => {
+                data.map(e => {
                     store.push(e)
                 });
 
@@ -34,11 +30,7 @@ $(() => {
                     visible: true
                 });
             } else {
-                [...data.Inputs.map(function (i) {
-                    return { ...i, ...{ Type: "INPUT" } }
-                }), ...data.Outputs.map(function (i) {
-                    return { ...i, ...{ Type: "OUTPUT" } }
-                })].map(e => {
+                data.map(e => {
                     dataSource.push([{ type: 'update', key: e.Pin, data: e }])
                 });
             }

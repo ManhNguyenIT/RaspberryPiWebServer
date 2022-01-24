@@ -11,8 +11,7 @@ $(() => {
     let setting = $('#setting')
     let sensorOn = $('#sensor-on')
     let sensorOff = $('#sensor-off')
-    let count = $('#count')
-    let noCount = $('#no-count')
+    let error = $('#error')
     let model = $('#model')
     let template = $('#template')
     let code = $('#code')
@@ -22,11 +21,88 @@ $(() => {
     let ngQty = $('#ng-qty')
     let ngRate = $('#ng-rate')
 
+
+    let password = $('#password').dxTextBox({
+        mode: 'password',
+        placeholder: 'Enter password',
+        showClearButton: true,
+    }).dxTextBox('instance');
+
+    let popup = $('#popup').dxPopup({
+        width: 300,
+        height: 200,
+        container: '.dx-viewport',
+        showTitle: true,
+        title: 'Mật khẩu cài đặt',
+        visible: false,
+        dragEnabled: false,
+        closeOnOutsideClick: true,
+        showCloseButton: false,
+        onShown: function () {
+            password.focus();
+        },
+        position: {
+            at: 'center',
+            my: 'center',
+        },
+        toolbarItems: [{
+            widget: 'dxButton',
+            toolbar: 'bottom',
+            location: 'before',
+            options: {
+                icon: 'check',
+                type: 'success',
+                text: 'Xác nhận',
+                stylingMode: 'outlined',
+                onClick() {
+                    if (password.option("value") === '') {
+                        return
+                    }
+                    $.ajax({
+                        url: 'api/localization/check-password',
+                        type: 'POST',
+                        contentType: 'application/x-www-form-urlencoded',
+                        data: { password: password.option("value")},
+                        success: function (res) {
+                            if (res) {
+                                password.option("value", '')
+                                popup.callback();
+                            } else {
+                                DevExpress.ui.notify("Sai mật khẩu", 'error', 600);
+                            }
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            DevExpress.ui.notify(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText, 'error', 600);
+                        }
+                    });
+                },
+            },
+        }, {
+            widget: 'dxButton',
+            toolbar: 'bottom',
+            location: 'after',
+            options: {
+                icon: 'close',
+                type: 'default',
+                text: 'Close',
+                stylingMode: 'outlined',
+                onClick() {
+                    popup.hide();
+                },
+            },
+        }],
+    }).dxPopup('instance');
+
     let connection = new signalR.HubConnectionBuilder()
         .configureLogging(signalR.LogLevel.Information)
         .withUrl("/hubs/monitor")
         .withAutomaticReconnect()
         .build();
+
+    function loginCallback(c) {
+        popup.callback = c;
+        popup.show();
+    }
 
     function onRunning() {
         isRunning = true;
@@ -42,6 +118,7 @@ $(() => {
         code.focus();
     }
     function onSetting() {
+        popup.hide();
         isRunning = false;
         setting.removeClass('btn-outline-warning')
         setting.addClass('btn-warning')
@@ -56,7 +133,6 @@ $(() => {
         code.val(history.code)
         code.removeClass('bg-success text-white')
         code.removeClass('bg-danger text-white')
-
         model.focus();
     }
     function getCurrent() {
@@ -83,20 +159,30 @@ $(() => {
         });
     }
 
-    count.on("click", function (e) {
-        history.isCount = true;
-        count.removeClass('btn-outline-success')
-        count.addClass('btn-success')
-        noCount.removeClass('btn-info')
-        noCount.addClass('btn-outline-info')
-    })
-
-    noCount.on("click", function (e) {
-        history.isCount = false;
-        noCount.removeClass('btn-outline-info')
-        noCount.addClass('btn-info')
-        count.removeClass('btn-success')
-        count.addClass('btn-outline-success')
+    error.on("click", function (e) {
+        var result = DevExpress.ui.dialog.confirm("<i>Xác nhận?</i>", "Xác nhận lỗi");
+        result.done(function (dialogResult) {
+            if (dialogResult) {
+                $.ajax({
+                    url: 'api/history/cancel-lastest',
+                    type: 'POST',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify(history),
+                    success: function (res) {
+                        DevExpress.ui.notify('Done', 'success', 600);
+                        totalQty.val(res.Ok + res.Ng);
+                        okQty.val(res.Ok);
+                        ngQty.val(res.Ng);
+                        okRate.val(res.Ok + res.Ng === 0 ? 0 : (res.Ok * 100 / (res.Ok + res.Ng)).toFixed(2));
+                        ngRate.val(res.Ok + res.Ng === 0 ? 0 : (res.Ng * 100 / (res.Ok + res.Ng)).toFixed(2));
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        DevExpress.ui.notify(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText, 'error', 600);
+                    }
+                });
+            }
+        });
     })
 
     template.on("change", function (e) {
@@ -141,7 +227,7 @@ $(() => {
                 url: 'api/history/post',
                 type: 'POST',
                 contentType: "application/json; charset=utf-8",
-                //dataType: "json",
+                dataType: "json",
                 data: JSON.stringify(history),
                 success: function (res) {
                     DevExpress.ui.notify('Done', 'success', 600);
@@ -161,15 +247,13 @@ $(() => {
         onRunning();
     })
     setting.on('click', function () {
-        onSetting();
+        loginCallback(onSetting);
     })
-    count.click();
-    onSetting();
 
     connection.start().then(function () {
         connection.on("Monitor", function (data) {
             data = JSON.parse(data);
-            let sensorData = data.Inputs.find(i => i.Pin === sensorPin);
+            let sensorData = data.find(i =>i.Type==="INPUT" && i.Pin === sensorPin);
             if (sensorData !== null) {
                 if (sensorData.Value) {
                     isSensor = true;

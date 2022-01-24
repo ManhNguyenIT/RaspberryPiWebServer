@@ -14,13 +14,13 @@ namespace WebApp.Controllers
     {
         private readonly IEntityService<History> _service;
         private readonly MonitorService _monitorService;
-        private readonly Settings _settings;
+        private readonly Item[] _outputs;
 
         public HistoryController(IEntityService<History> service, MonitorService monitorService)
         {
             _service = service;
             _monitorService = monitorService;
-            _settings = monitorService.Read();
+            _outputs = monitorService.GetOutputs();
         }
 
         [HttpGet]
@@ -45,35 +45,48 @@ namespace WebApp.Controllers
             }
         }
 
-        [HttpPost("post")]
-        public async Task<IActionResult> PostAsync([FromBody] object values)
+        private async Task<dynamic> GetCurrent(History history)
         {
-            DateTime from = DateTime.Now.Date;
-            DateTime to = DateTime.Now.Date.AddDays(1);
+            DateTime date = DateTime.Now.Date;
+            var last = await _service.GetAll().Where(i => !i.IsCancelled)
+                    .OrderByDescending(i => i.Created).FirstOrDefaultAsync();
+            if (last == null || last.Model!=history.Model||last.Template!=history.Template||last.Created<date)
+            {
+                return new { Ok = 0, Ng = 0 };
+            }
+
+            var querry = _service.GetAll()
+                .Where(i => i.Template == history.Template && i.Model == history.Model && i.Times==last.Times && date < i.Created);
+            return new { Ok = querry.Where(i => i.Code == i.Template).Count(), Ng = querry.Where(i => i.Code != i.Template).Count() };
+        }
+
+        [HttpPost("current")]
+        public async Task<IActionResult> Current([FromBody] History history)
+        {
+            return Ok(await GetCurrent(history));
+        }
+
+        [HttpPost("cancel-lastest")]
+        public async Task<IActionResult> CancelLastest([FromBody] History history)
+        {
+            DateTime date = DateTime.Now.Date;
             try
             {
-                var item = new Item();
-                JsonConvert.PopulateObject(values.ToString(), item);
-                var _item = _settings.Outputs.Where(i => i.Name == item.Name && i.Pin == item.Pin).FirstOrDefault();
-                if (_item == null)
+                var entity = await _service.GetAll()
+                    .OrderByDescending(i => i.Created).FirstOrDefaultAsync();
+                if (entity == null||entity.Model!=history.Model||entity.Template!=history.Template||entity.Created<date)
                 {
-                    return BadRequest($"Cannot find Output with name {item.Name} and pin {item.Pin}");
+                    return NotFound();
                 }
-
-                await _monitorService.WriteAsync(_item, _settings.Delay);
-
-                var entity = new History();
-                JsonConvert.PopulateObject(values.ToString(), entity);
-
-                if (entity.isCount)
+                if (entity.IsCancelled)
                 {
-                    await _service.Add(entity);
+                    return NoContent();
                 }
+                entity.IsCancelled=true;
+                entity.Updated = DateTime.Now;
+                await _service.Update(entity);
 
-                var querry = _service.GetAll()
-                    .Where(i => i.Template == entity.Template && i.Model == entity.Model && from < i.Created && i.Created < to);
-
-                return Ok(new { Ok = querry.Where(i => i.Code == i.Template).Count(), Ng = querry.Where(i => i.Code != i.Template).Count() });
+                return Ok(await GetCurrent(history));
             }
             catch (Exception ex)
             {
@@ -81,16 +94,37 @@ namespace WebApp.Controllers
             }
         }
 
-        [HttpPost("current")]
-        public IActionResult Current([FromBody] History history)
+        [HttpPost("post")]
+        public async Task<IActionResult> PostAsync([FromBody] History history)
         {
-            DateTime from = DateTime.Now.Date;
-            DateTime to = DateTime.Now.Date.AddDays(1);
+            DateTime date = DateTime.Now.Date;
             try
             {
-                var querry = _service.GetAll()
-                    .Where(i => i.Template == history.Template && i.Model == history.Model && from < i.Created && i.Created < to);
-                return Ok(new { Ok = querry.Where(i => i.Code == i.Template).Count(), Ng = querry.Where(i => i.Code != i.Template).Count() });
+                var _item = _outputs.Where(i => i.Name == history.Name && i.Pin == history.Pin).FirstOrDefault();
+                if (_item == null)
+                {
+                    return BadRequest($"Output with name {history.Name} and pin {history.Pin} not found");
+                }
+
+                await _monitorService.WriteAsync(_item);
+
+                var last = await _service.GetAll()
+                    .OrderByDescending(i => i.Created).FirstOrDefaultAsync();
+                if (last == null || last.Created.Date<date)
+                {
+                    history.Times=1;
+                }
+                else if (last.Model!=history.Model||last.Template!=history.Template)
+                {
+                    history.Times+=1;
+                }
+                else
+                {
+                    history.Times=last.Times;
+                }
+                await _service.Add(history);
+
+                return Ok(await GetCurrent(history));
             }
             catch (Exception ex)
             {
@@ -103,14 +137,14 @@ namespace WebApp.Controllers
         {
             try
             {
-                var table = _service.GetAll();
-                var querry = table.GroupBy(i => new { i.Template, i.Model, i.Created.Date })
-                    .Select(i => new { i.Key.Template, i.Key.Model, i.Key.Date, StartAt = i.Min(g => g.Created), Ok = i.Where(g => g.Code==g.Template).Count(), Total = i.Count() });
+                var table = _service.GetAll().Where(i => !i.IsCancelled);
+                var querry = table.GroupBy(i => new { i.Template, i.Model, i.Times, i.Created.Date })
+                    .Select(i => new { i.Key.Template, i.Key.Model, i.Key.Times, i.Key.Date, StartAt = i.Min(g => g.Created), Ok = i.Where(g => g.Code==g.Template).Count(), Total = i.Count() });
                 var table2 = from i in table
-                             join q in querry on new { i.Template, i.Model, i.Created.Date } equals new { q.Template, q.Model, q.Date }
-                             select new { i.Template, i.Model, q.Date, q.StartAt, q.Ok, q.Total };
+                             join q in querry on new { i.Template, i.Model, i.Times, i.Created.Date } equals new { q.Template, q.Model, q.Times, q.Date }
+                             select new { i.Template, i.Model, i.Times, q.Date, q.StartAt, q.Ok, q.Total };
 
-                var res = await table2.GroupBy(i => new { i.Template, i.Model, i.Date, i.StartAt })
+                var res = await table2.GroupBy(i => new { i.Template, i.Model, i.Times, i.Date, i.StartAt })
                         .Select(i =>
                         new Report()
                         {
