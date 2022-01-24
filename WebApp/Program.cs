@@ -28,6 +28,11 @@ builder.Services.AddHostedService<MonitorWorker>();
 builder.Services.AddScoped<IEntityRepository<History>, HistoryRepository>();
 builder.Services.AddScoped<IEntityService<History>, HistoryService>();
 
+using (var scope = builder.Services.BuildServiceProvider().CreateScope())
+{
+    scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
+}
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -11,7 +11,7 @@ using WebApp.Data;
 namespace WebApp.Data.Directory
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220122053439_AddInputTimes")]
+    [Migration("20220124053157_AddInputTimes")]
     partial class AddInputTimes
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -18,6 +18,7 @@ namespace WebApp.Data
                 optionsBuilder.UseSqlite("Data Source=ktf.db;");
             }
         }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<History>(entity =>
